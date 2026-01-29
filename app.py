@@ -5,13 +5,13 @@ from PIL import Image
 import gradio as gr
 
 
-# 1. MODELİ YÜKLEME
+# 1. UPLOADING MODEL
 def load_model():
     model = models.resnet18(pretrained=False)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 2)
 
-    # 'map_location=torch.device('cpu')' önemli, çünkü bilgisayarında GPU ayarı yapmadık
+    # 'map_location=torch.device('cpu')' This is important because we haven't adjusted the GPU settings on your computer.
     model.load_state_dict(torch.load('ai_image_detector_resnet18.pth', map_location=torch.device('cpu')))
     model.eval()
     return model
@@ -19,19 +19,19 @@ def load_model():
 
 model = load_model()
 
-# 2. GÜNCELLENMİŞ DÖNÜŞTÜRÜCÜ (SENİN BULDUĞUN ÇÖZÜM)
-# Kaliteli fotoları önce 32x32'ye indirip bozuyoruz, sonra modelin boyutuna (224) çıkarıyoruz.
+# 2. UPDATED CONVERTER
+# We first reduce and degrade the quality photos to 32x32, then increase them to the model size (224).
 transform_fix = transforms.Compose([
-    transforms.Resize((32, 32)),  # Kaliteyi kasıtlı düşür
-    transforms.Resize((224, 224)),  # Modele uygun boyuta getir
+    transforms.Resize((32, 32)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
 
-# 3. TAHMİN FONKSİYONU
+# 3. PREDICTION FUNCTION
 def predict(image):
-    # Gradio'dan gelen resim bazen NumPy array olabilir, onu PIL Image'a çevirelim
+    # The image from Gradio might sometimes be a NumPy array; let's convert it to a PIL Image.
     if not isinstance(image, Image.Image):
         image = Image.fromarray(image)
 
@@ -41,12 +41,10 @@ def predict(image):
         outputs = model(image_tensor)
         probabilities = torch.nn.functional.softmax(outputs, dim=1)[0]
 
-    # Colab'deki class_to_idx çıktısına göre burayı güncellemen gerekebilir!
-    # Genelde: 0=FAKE, 1=REAL
     return {"FAKE": float(probabilities[0]), "REAL": float(probabilities[1])}
 
 
-# 4. ARAYÜZ
+# 4. INTERFACE
 interface = gr.Interface(
     fn=predict,
     inputs=gr.Image(type="pil"),
