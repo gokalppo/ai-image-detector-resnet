@@ -14,7 +14,7 @@ With the rise of Generative AI, distinguishing between real and synthetic images
 This project implements a **Deep Learning** solution using **Transfer Learning** on the **ResNet18** architecture. It is trained on the CIFAKE dataset and deployed as a user-friendly web application using **Gradio**.
 
 ### ✨ Key Features
-* **High Accuracy:** Achieved **99.97%** accuracy on the CIFAKE test set.
+* **High Accuracy:** Achieved **97.20%** accuracy on the CIFAKE test set.
 * **Transfer Learning:** Utilized pre-trained ResNet18 weights for robust feature extraction.
 * **Real-World Robustness:** Implemented a custom pre-processing pipeline to handle the **Domain Shift** between training data (low-res) and real-world images (high-res).
 * **Web Interface:** Interactive drag-and-drop interface for real-time testing.
@@ -86,7 +86,7 @@ The project was trained on the **CIFAKE** dataset:
 
 | Metric | Score |
 | :--- | :--- |
-| **Accuracy** | 99.97% |
+| **Accuracy** | 97.20% |
 | **Loss** | 0.0008 |
 | **Precision** | ~1.00 |
 
